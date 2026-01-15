@@ -1,0 +1,29 @@
+{
+  "voice": {
+    "wake_word": "jarvis",
+    "default_voice": "aria",
+    "stt_model": "small",
+    "tts_speed": 1.0,
+    "listen_timeout": 5.0
+  },
+  "llm": {
+    "model": "phi3:mini",
+    "temperature": 0.7,
+    "max_tokens": 500,
+    "timeout": 30.0
+  },
+  "confidence": {
+    "execute_threshold": 0.85,
+    "confirm_threshold": 0.60,
+    "risk_weights": {
+      "low": 1.0,
+      "medium": 0.85,
+      "high": 0.70
+    }
+  },
+  "data_dir": "./storage",
+  "log_file": "./storage/jarvis.log",
+  "debug_mode": false,
+  "enable_screen_monitoring": true,
+  "enable_emotion_detection": false
+}
