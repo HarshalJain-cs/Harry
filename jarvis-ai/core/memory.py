@@ -15,7 +15,6 @@ from dataclasses import dataclass
 
 try:
     import chromadb
-    from chromadb.config import Settings as ChromaSettings
     CHROMA_AVAILABLE = True
 except ImportError:
     CHROMA_AVAILABLE = False
@@ -134,12 +133,14 @@ class MemorySystem:
     def _init_chroma(self):
         """Initialize ChromaDB for semantic search."""
         try:
-            self.chroma_client = chromadb.Client(ChromaSettings(
-                chroma_db_impl="duckdb+parquet",
-                persist_directory=self.chroma_path,
-                anonymized_telemetry=False,
-            ))
-            
+            # Use new PersistentClient API (ChromaDB 0.4+)
+            self.chroma_client = chromadb.PersistentClient(
+                path=self.chroma_path,
+                settings=chromadb.Settings(
+                    anonymized_telemetry=False,
+                )
+            )
+
             self.memories_collection = self.chroma_client.get_or_create_collection(
                 name="jarvis_memories",
                 metadata={"description": "JARVIS semantic memories"}
@@ -374,8 +375,7 @@ class MemorySystem:
     def close(self):
         """Close database connections."""
         self.conn.close()
-        if self.chroma_client:
-            self.chroma_client.persist()
+        # ChromaDB PersistentClient auto-persists, no manual persist needed
 
 
 if __name__ == "__main__":

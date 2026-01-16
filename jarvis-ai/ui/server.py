@@ -148,7 +148,7 @@ class JarvisAPI:
                 
                 # Process command
                 result = await asyncio.to_thread(
-                    self.agent.process_text,
+                    self.agent.process_text_command,
                     request.command,
                 )
                 
@@ -200,7 +200,7 @@ class JarvisAPI:
                 from core.memory import MemorySystem
                 memory = MemorySystem()
                 
-                history = memory.get_command_history(limit)
+                history = memory.get_recent_commands(limit)
                 return {"history": history}
             except Exception as e:
                 raise HTTPException(status_code=500, detail=str(e))
@@ -227,7 +227,7 @@ class JarvisAPI:
                             self.agent = JarvisAgent()
                         
                         result = await asyncio.to_thread(
-                            self.agent.process_text,
+                            self.agent.process_text_command,
                             command,
                         )
                         

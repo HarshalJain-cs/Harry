@@ -23,8 +23,11 @@ from ai.llm import LLMClient
 from core.intent_parser import IntentParser
 from core.confidence import ConfidenceScorer, ExecutionMode
 from core.memory import MemorySystem
+from core.conversation import get_conversation_context, ConversationContext
+from core.suggestions import get_suggestion_engine, SuggestionEngine
 from tools.registry import get_registry, ToolResult
 from config.settings import get_settings
+from ai.personalities import get_personality_manager, PersonalityManager
 
 
 class AgentState(Enum):
@@ -102,6 +105,11 @@ class JarvisAgent:
         self.confidence_scorer = ConfidenceScorer()
         self.memory = MemorySystem()
         
+        # Advanced Components
+        self.conversation = get_conversation_context()
+        self.suggestions = get_suggestion_engine(self.memory)
+        self.personalities = get_personality_manager()
+        
         # Tools
         self.tools = get_registry()
     
@@ -110,7 +118,9 @@ class JarvisAgent:
         # Set up signal handler for graceful shutdown
         signal.signal(signal.SIGINT, self._signal_handler)
         
-        self.speak(f"Hello! I am JARVIS. Say '{self.settings.voice.wake_word}' to activate me.")
+        # Use personality greeting
+        personality = self.personalities.get_active()
+        self.speak(personality.greeting)
         
         while self.running:
             try:
@@ -339,6 +349,12 @@ class JarvisAgent:
     
     def process_text_command(self, command: str) -> CommandResult:
         """Process a text command (no voice)."""
+        # Resolve references ("it", "that", etc.) using conversation context
+        resolved_command = self.conversation.resolve_reference(command)
+        if resolved_command != command:
+            print(f"Resolved: '{command}' -> '{resolved_command}'")
+            command = resolved_command
+        
         parsed = self.intent_parser.parse(command)
         
         tool_name = self.intent_parser.get_tool_for_intent(parsed.intent)
@@ -347,7 +363,35 @@ class JarvisAgent:
         
         conf_result = self.confidence_scorer.score(parsed.confidence, risk)
         
-        return self._handle_intent(parsed, conf_result, tool_name)
+        result = self._handle_intent(parsed, conf_result, tool_name)
+        
+        # Track conversation for future reference resolution
+        self.conversation.add(
+            user_input=command,
+            intent=parsed.intent,
+            entities=parsed.entities,
+            response=result.response,
+        )
+        
+        # Learn patterns for suggestions
+        self.suggestions.learn_pattern(
+            action=parsed.intent,
+            context={"app": parsed.entities.get("app")},
+        )
+        
+        return result
+    
+    def switch_personality(self, name: str) -> bool:
+        """Switch assistant personality."""
+        if self.personalities.switch(name):
+            personality = self.personalities.get_active()
+            self.speak(f"Switching to {personality.name}. {personality.greeting}")
+            return True
+        return False
+    
+    def get_suggestions(self) -> list:
+        """Get proactive suggestions based on context and patterns."""
+        return self.suggestions.get_suggestions()
     
     def _signal_handler(self, signum, frame):
         """Handle shutdown signals."""

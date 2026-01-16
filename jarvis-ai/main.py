@@ -170,8 +170,63 @@ def run_tests():
     except Exception as e:
         print(f"   ✗ Confidence Scorer Error: {e}")
     
+    # Test Conversation Context
+    print("\n6. Testing Conversation Context...")
+    try:
+        from core.conversation import ConversationContext
+        ctx = ConversationContext()
+        ctx.add("open chrome", "open_app", {"app": "chrome"}, "Opening Chrome")
+        resolved = ctx.resolve_reference("close it")
+        print(f"   Reference resolution: 'close it' -> '{resolved}'")
+        print("   ✓ Conversation Context OK")
+    except Exception as e:
+        print(f"   ✗ Conversation Context Error: {e}")
+    
+    # Test Suggestions Engine
+    print("\n7. Testing Suggestions Engine...")
+    try:
+        from core.suggestions import SuggestionEngine
+        engine = SuggestionEngine()
+        suggestions = engine.get_suggestions()
+        print(f"   Got {len(suggestions)} suggestion(s)")
+        print("   ✓ Suggestions Engine OK")
+    except Exception as e:
+        print(f"   ✗ Suggestions Engine Error: {e}")
+    
+    # Test Personality Manager
+    print("\n8. Testing Personality Manager...")
+    try:
+        from ai.personalities import PersonalityManager
+        pm = PersonalityManager()
+        personality = pm.get_active()
+        print(f"   Active: {personality.name} - '{personality.greeting}'")
+        pm.switch("friday")
+        print(f"   Switched to: {pm.get_active().name}")
+        print("   ✓ Personality Manager OK")
+    except Exception as e:
+        print(f"   ✗ Personality Manager Error: {e}")
+    
+    # Test Integrations Import
+    print("\n9. Testing Integrations...")
+    try:
+        from integrations import NotionClient, SlackClient, get_wakey_client
+        print("   Notion, Slack, Wakey imports OK")
+        print("   ✓ Integrations OK")
+    except Exception as e:
+        print(f"   ✗ Integrations Error: {e}")
+    
+    # Test Dictation Module
+    print("\n10. Testing Dictation Module...")
+    try:
+        from ai.dictation import DictationMode
+        dm = DictationMode()
+        print(f"   Dictation mode created (pause threshold: {dm.pause_threshold}s)")
+        print("   ✓ Dictation Module OK")
+    except Exception as e:
+        print(f"   ✗ Dictation Module Error: {e}")
+    
     print("\n" + "="*50)
-    print("Tests complete!")
+    print("Tests complete! 10/10 components tested.")
 
 
 def main():
