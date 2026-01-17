@@ -61,7 +61,22 @@ apscheduler>=3.10.0
 rich>=13.0.0
 pydantic>=2.0.0
 
-# ============ Development ============
+# ============ Document Processing ============
+PyMuPDF>=1.23.0
+python-docx>=1.0.0
+markdown>=3.5.0
+
+# ============ Advanced Audio ============
+noisereduce>=3.0.0
+
+# ============ Finance ============
+yfinance>=0.2.30
+# pycoingecko>=3.1.0  # Optional, uses urllib instead
+
+# ============ Development & Testing ============
 pytest>=7.4.0
+pytest-asyncio>=0.23.0
+pytest-mock>=3.12.0
+pytest-cov>=4.1.0
 black>=23.0.0
 gitpython>=3.1.0

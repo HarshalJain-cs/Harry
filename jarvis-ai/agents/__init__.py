@@ -10,6 +10,8 @@ from .executor import ExecutorAgent, ExecutionReport
 from .research import ResearchAgent, ResearchReport
 from .workflow import Workflow, WorkflowStep, WorkflowEngine
 from .context import ContextManager, RAGSystem
+from .rag import RAGAgent, get_rag_agent
+from .workflow_builder import WorkflowBuilder, WorkflowExecutor, get_workflow_builder
 
 __all__ = [
     # Base
@@ -32,7 +34,14 @@ __all__ = [
     "Workflow",
     "WorkflowStep",
     "WorkflowEngine",
-    # Context
+    # Context & RAG
     "ContextManager",
     "RAGSystem",
+    "RAGAgent",
+    "get_rag_agent",
+    # Workflow Builder
+    "WorkflowBuilder",
+    "WorkflowExecutor",
+    "get_workflow_builder",
 ]
+
