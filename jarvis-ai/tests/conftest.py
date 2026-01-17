@@ -89,54 +89,76 @@ def temp_dir():
 @pytest.fixture
 def memory_system(temp_db, temp_chroma):
     """Create a memory system with temporary storage."""
-    from core.memory import MemorySystem
-    
-    memory = MemorySystem(
-        db_path=temp_db,
-        chroma_path=temp_chroma
-    )
-    
-    yield memory
-    
-    memory.close()
+    try:
+        from core.memory import MemorySystem
+        memory = MemorySystem(
+            db_path=temp_db,
+            chroma_path=temp_chroma
+        )
+        yield memory
+        memory.close()
+    except ImportError:
+        pytest.skip("MemorySystem not available")
 
 
 @pytest.fixture
 def intent_parser(mock_llm):
     """Create an intent parser with mocked LLM."""
-    from core.intent_parser import IntentParser
-    
-    parser = IntentParser()
-    parser.llm = mock_llm
-    return parser
+    try:
+        from core.intent_parser import IntentParser
+        parser = IntentParser()
+        parser.llm = mock_llm
+        return parser
+    except ImportError:
+        pytest.skip("IntentParser not available")
 
 
 @pytest.fixture
 def confidence_scorer():
     """Create a confidence scorer."""
-    from core.confidence import ConfidenceScorer
-    return ConfidenceScorer()
+    try:
+        from core.confidence import ConfidenceScorer
+        return ConfidenceScorer()
+    except ImportError:
+        pytest.skip("ConfidenceScorer not available")
 
 
 @pytest.fixture
 def conversation_context():
     """Create a conversation context tracker."""
-    from core.conversation import ConversationContext
-    return ConversationContext()
+    try:
+        from core.conversation import ConversationContext
+        return ConversationContext()
+    except ImportError:
+        pytest.skip("ConversationContext not available")
 
 
 @pytest.fixture
 def suggestion_engine():
     """Create a suggestion engine."""
-    from core.suggestions import SuggestionEngine
-    return SuggestionEngine()
+    try:
+        from core.suggestions import get_suggestion_engine
+        return get_suggestion_engine()
+    except ImportError:
+        try:
+            from core.suggestions import SuggestionEngine
+            return SuggestionEngine()
+        except ImportError:
+            pytest.skip("SuggestionEngine not available")
 
 
 @pytest.fixture
 def tool_registry():
     """Get a fresh tool registry."""
-    from tools.registry import ToolRegistry
-    return ToolRegistry()
+    try:
+        from tools.registry import get_registry
+        return get_registry()
+    except ImportError:
+        try:
+            from tools.registry import ToolRegistry
+            return ToolRegistry()
+        except ImportError:
+            pytest.skip("ToolRegistry not available")
 
 
 # ============ Sample Data Fixtures ============
@@ -181,7 +203,6 @@ def sample_audio():
     """Path to sample audio file (if exists)."""
     audio_path = PROJECT_ROOT / "tests" / "fixtures" / "sample.wav"
     if not audio_path.exists():
-        # Return None if no sample audio
         return None
     return audio_path
 

@@ -66,31 +66,7 @@ class HotkeyManager:
         'meta': 'cmd',
     }
     
-    SPECIAL_KEYS = {
-        'ctrl': Key.ctrl_l,
-        'alt': Key.alt_l,
-        'shift': Key.shift,
-        'cmd': Key.cmd,
-        'tab': Key.tab,
-        'enter': Key.enter,
-        'return': Key.enter,
-        'space': Key.space,
-        'esc': Key.esc,
-        'escape': Key.esc,
-        'backspace': Key.backspace,
-        'delete': Key.delete,
-        'up': Key.up,
-        'down': Key.down,
-        'left': Key.left,
-        'right': Key.right,
-        'home': Key.home,
-        'end': Key.end,
-        'pageup': Key.page_up,
-        'pagedown': Key.page_down,
-        'f1': Key.f1, 'f2': Key.f2, 'f3': Key.f3, 'f4': Key.f4,
-        'f5': Key.f5, 'f6': Key.f6, 'f7': Key.f7, 'f8': Key.f8,
-        'f9': Key.f9, 'f10': Key.f10, 'f11': Key.f11, 'f12': Key.f12,
-    }
+    # SPECIAL_KEYS is set dynamically in __init__ when pynput is available
     
     def __init__(self, config_path: Optional[str] = None):
         """
