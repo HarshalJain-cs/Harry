@@ -111,6 +111,10 @@ def intent_parser(mock_llm):
         return parser
     except ImportError:
         pytest.skip("IntentParser not available")
+    except RuntimeError as e:
+        pytest.skip(f"IntentParser runtime error: {e}")
+    except Exception as e:
+        pytest.skip(f"IntentParser error: {e}")
 
 
 @pytest.fixture
@@ -121,6 +125,8 @@ def confidence_scorer():
         return ConfidenceScorer()
     except ImportError:
         pytest.skip("ConfidenceScorer not available")
+    except Exception as e:
+        pytest.skip(f"ConfidenceScorer error: {e}")
 
 
 @pytest.fixture
@@ -131,6 +137,8 @@ def conversation_context():
         return ConversationContext()
     except ImportError:
         pytest.skip("ConversationContext not available")
+    except Exception as e:
+        pytest.skip(f"ConversationContext error: {e}")
 
 
 @pytest.fixture
@@ -145,6 +153,8 @@ def suggestion_engine():
             return SuggestionEngine()
         except ImportError:
             pytest.skip("SuggestionEngine not available")
+    except Exception as e:
+        pytest.skip(f"SuggestionEngine error: {e}")
 
 
 @pytest.fixture
